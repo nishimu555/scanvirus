@@ -3,14 +3,14 @@ name: Scan Virus
 on:
   push:
     branches-ignore:
-      - **
+      - "**"
     # branches:
     #   - main
 
 jobs:
   scan-virus:
     runs-on: ubuntu-20.04
-    timeout-minutes: 300
+    timeout-minutes: 5
 
 
     steps:
