@@ -16,6 +16,10 @@ jobs:
 
       # https://docs.clamav.net/manual/Installing/Docker.html
       # https://clamav-jp.osdn.jp/jdoc/clamav.html#c3.2.1
+
+      # test virus
+      # https://downloadcenter.trendmicro.com/index.php?regs=jp&prodid=1424
+
       - name: run clamav
         run: |
           scandir=$(pwd)
@@ -24,4 +28,6 @@ jobs:
             --mount type=bind,source=$scandir,target=/scandir \
             --mount type=bind,source=/tmp,target=/var/lib/clamav \
             clamav/clamav:0.105 \
-            freshclam --on-update-execute="clamscan /scandir"
+            freshclam --on-update-execute="clamscan --debug --log=result.log /scandir"
+
+            # freshclam --on-update-execute="clamscan /scandir"
