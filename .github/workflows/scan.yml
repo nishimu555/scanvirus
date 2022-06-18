@@ -18,10 +18,11 @@ jobs:
         run: |
           echo $GITHUB_PATH
           ls $GITHUB_PATH
+          pwd
 
       - name: install clamav
         run: |
-          apt-get install clamav clamav-daemon
-          systemctl start clamav-daemon.service
-          systemctl start clamav-daemon.service 
+          sudo apt-get install clamav clamav-daemon
+          sudo systemctl start clamav-daemon.service
+          sudo systemctl start clamav-daemon.service 
 
