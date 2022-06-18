@@ -48,12 +48,18 @@ jobs:
 
       - name: Create issue
         if: ${{ failure() }}
-        uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
-        with:
-          labels: "virus"
-          title: "virus check failed !"
-          body: |
-            {{ $RESULT_TEXT }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RESULT_TEXT: $(cat /tmp/result.log)
+        run: |
+          cat /tmp/result.log | grep FOUND > /tmp/result_virus.log
+          
+          echo "[Virus files]" > /tmp/report.log
+          cat /tmp/result_virus.log >> /tmp/report.log
+          echo "-------------------------------------------" >> /tmp/report.log
+          echo "[All log]" >> /tmp/report.log
+          cat /tmp/result.log >> /tmp/report.log
+
+          gh issue create \
+          --title "[Failed] virus is existed !!!" \
+          --label virus \
+          --body-file /tmp/result.log
