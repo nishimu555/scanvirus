@@ -28,7 +28,7 @@ jobs:
         id: scan_clamav
         run: |
           scandir=$(pwd)/${{env.SCAN_DIR}}
-          echo scandir
+          echo $scandir
 
           docker run \
             --rm \
