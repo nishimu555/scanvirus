@@ -31,14 +31,20 @@ jobs:
             clamav/clamav:0.105 \
             freshclam --on-update-execute="clamscan -r -l /tmp/result.log /scandir"
 
-      - name: display result
-        if: ${{ always() }}
+      - name: check result
         run: |
             echo "[scan result]"
             cat /tmp/result.log
 
+            failed_check=$(cat /tmp/result.log | grep FOUND | wc -m | awk '{print $1}')
+
+            # FOUNDが1件でもあったらjobを失敗させる
+            if [ ${failed_check} -ne 0 ]; then
+              return 1
+            fi 
+
       - name: Create issue
-        # if: ${{ failure() }}
+        if: ${{ failure() }}
         uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
         with:
           labels: "virus"
