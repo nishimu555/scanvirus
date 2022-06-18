@@ -40,7 +40,9 @@ jobs:
 
             # FOUNDが1件でもあったらjobを失敗させる
             if [ ${failed_check} -ne 0 ]; then
-              echo "!!!Failed virus check!!!"
+              echo "*****************************"
+              echo "[Failed] virus is existed !!!"
+              echo "*****************************"
               exit 1
             fi 
 
@@ -50,7 +52,6 @@ jobs:
         with:
           labels: "virus"
           title: "virus check failed !"
-          body: |
-            cat /tmp/result.log
+          body: $(cat /tmp/result.log)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
