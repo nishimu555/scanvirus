@@ -13,7 +13,7 @@ on:
 
 # 空文字だと全フォルダを対象
 env:
-  SCAN_DIR : "/var/lib/docker"
+  SCAN_DIR : "/var/lib/docker/image"
 
 jobs:
   scan-virus:
@@ -28,7 +28,8 @@ jobs:
           cd build
           docker build -t test/virus-image .
           docker image ls
-          sudo ls $SCAN_DIR
+          sudo tree $SCAN_DIR /f
+          # sudo ls $SCAN_DIR
 
       # - name: scan clamav
       #   id: scan_clamav
