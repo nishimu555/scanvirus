@@ -40,7 +40,8 @@ jobs:
 
             # FOUNDが1件でもあったらjobを失敗させる
             if [ ${failed_check} -ne 0 ]; then
-              return 1
+              echo "!!!Failed virus check!!!"
+              exit 1
             fi 
 
       - name: Create issue
