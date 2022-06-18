@@ -5,6 +5,12 @@ on:
     branches:
       - main
 
+  workflow_dispatch:
+    inputs:
+      scandir:
+        description: 'Input scan dir'
+        required: true
+
 # 空文字だと全フォルダを対象
 env:
   SCAN_DIR : "subdir"
@@ -27,7 +33,7 @@ jobs:
       - name: scan clamav
         id: scan_clamav
         run: |
-          scandir=$(pwd)/${{env.SCAN_DIR}}
+          scandir=$(pwd)/${{ github.event.inputs.scandir }}
           echo $scandir
 
           docker run \
