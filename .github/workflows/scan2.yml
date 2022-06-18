@@ -21,4 +21,4 @@ jobs:
             --rm \
             --mount type=bind,source=$scandir,target=/scandir \
             clamav/clamav:0.105 \
-            clamscan /scandir
+            "freshclam&&clamscan /scandir"
