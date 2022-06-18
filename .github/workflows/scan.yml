@@ -2,8 +2,10 @@ name: Scan Virus
 
 on:
   push:
-    branches:
-      - main
+    branches-ignore:
+      - **
+    # branches:
+    #   - main
 
 jobs:
   scan-virus:
