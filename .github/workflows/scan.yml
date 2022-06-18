@@ -30,14 +30,15 @@ jobs:
             --mount type=bind,source=/tmp,target=/tmp \
             clamav/clamav:0.105 \
             freshclam --on-update-execute="clamscan -r -l /tmp/result.log /scandir"
-            echo "[result]"
+
+      - name: display result
+        if: ${{ always() }}
+        run: |
+            echo "[scan result]"
             cat /tmp/result.log
 
-            # --mount type=bind,source=/tmp,target=/var/lib/clamav \
-            # freshclam --on-update-execute="clamscan /scandir"
-
       - name: Create issue
-        if: ${{ failure() }}
+        # if: ${{ failure() }}
         uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
         with:
           labels: "virus"
