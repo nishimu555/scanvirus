@@ -22,14 +22,15 @@ jobs:
         run: |
           echo "[Install clamav]"
           sudo apt-get install clamav clamav-daemon
-          echo "[Start clamav-daemon]"
-          sudo systemctl start clamav-daemon.service
-          sudo systemctl status clamav-daemon.service
-          echo "[Start clamav-freshclam]"
-          sudo systemctl start clamav-freshclam.service
-          sudo systemctl status clamav-freshclam.service
           echo "[Update pattern]"
           sudo freshclam
+
+          # echo "[Start clamav-daemon]"
+          # sudo systemctl start clamav-daemon.service
+          # sudo systemctl status clamav-daemon.service
+          # echo "[Start clamav-freshclam]"
+          # sudo systemctl start clamav-freshclam.service
+          # sudo systemctl status clamav-freshclam.service
 
       - name: scan
         run: |
