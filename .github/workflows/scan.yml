@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  SCAN_DIR : ""
+
 jobs:
   scan-virus:
     runs-on: ubuntu-20.04
@@ -29,7 +32,7 @@ jobs:
             --mount type=bind,source=$scandir,target=/scandir \
             --mount type=bind,source=/tmp,target=/tmp \
             clamav/clamav:0.105 \
-            freshclam --on-update-execute="clamscan -r -l /tmp/result.log /scandir"
+            freshclam --on-update-execute="clamscan -r -l /tmp/result.log /scandir/${{env.SCAN_DIR}}"
 
       - name: check result
         run: |
@@ -51,14 +54,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cat /tmp/result.log | grep FOUND > /tmp/result_virus.log
-          
-          echo "[Virus files]" > /tmp/report.log
-          cat /tmp/result_virus.log >> /tmp/report.log
-          echo "-------------------------------------------" >> /tmp/report.log
-          echo "[All log]" >> /tmp/report.log
-          cat /tmp/result.log >> /tmp/report.log
-
           gh issue create \
           --title "[Failed] virus is existed !!!" \
           --label virus \
