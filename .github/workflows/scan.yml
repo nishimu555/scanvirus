@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  scan-virus:
     runs-on: ubuntu-20.04
     timeout-minutes: 300
 
@@ -21,7 +21,7 @@ jobs:
 
       - name: install clamav
         run: |
-          apt install clamav clamav-daemon
+          apt-get install clamav clamav-daemon
           systemctl start clamav-daemon.service
           systemctl start clamav-daemon.service 
 
