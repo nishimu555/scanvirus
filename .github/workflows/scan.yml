@@ -34,7 +34,11 @@ jobs:
         id: scan_clamav
         run: |
           scandir=$(pwd)/${{ github.event.inputs.scandir }}
-          echo $scandir
+
+          echo "Virus Report" > /tmp/report.log
+          echo "------------------------------" >> /tmp/report.log
+          echo "ScanDir : ${scandir}" >> /tmp/report.log
+          echo "------------------------------" >> /tmp/report.log
 
           docker run \
             --rm \
@@ -64,7 +68,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          cat /tmp/result.log >> /tmp/report.log
           gh issue create \
           --title "[Failed] virus is existed !!!" \
           --label virus \
-          --body-file /tmp/result.log
+          --body-file /tmp/report.log
