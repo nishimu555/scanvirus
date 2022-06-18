@@ -2,10 +2,8 @@ name: Scan Virus
 
 on:
   push:
-    branches-ignore:
-      - "**"
-    # branches:
-    #   - main
+    branches:
+      - main
 
 jobs:
   scan-virus:
@@ -16,26 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: display info
-        run: |
-          ls $(pwd)
-
-      - name: install clamav
-        run: |
-          echo "[Install clamav]"
-          sudo apt-get install clamav clamav-daemon
-          echo "[Update pattern]"
-          sudo freshclam
-
-          # echo "[Start clamav-daemon]"
-          # sudo systemctl start clamav-daemon.service
-          # sudo systemctl status clamav-daemon.service
-          # echo "[Start clamav-freshclam]"
-          # sudo systemctl start clamav-freshclam.service
-          # sudo systemctl status clamav-freshclam.service
-
-      - name: scan
+      # https://docs.clamav.net/manual/Installing/Docker.html
+      # https://clamav-jp.osdn.jp/jdoc/clamav.html#c3.2.1
+      - name: run clamav
         run: |
           scandir=$(pwd)
-          sudo clamdscan -r $scandir
-
+          docker run \
+            --rm \
+            --mount type=bind,source=$scandir,target=/scandir \
+            --mount type=bind,source=/tmp,target=/var/lib/clamav \
+            clamav/clamav:0.105 \
+            freshclam --on-update-execute="clamscan /scandir"
