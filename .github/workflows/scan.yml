@@ -27,15 +27,16 @@ jobs:
       - name: scan clamav
         id: scan_clamav
         run: |
-          scandir=$(pwd)
+          scandir=$(pwd)/${{env.SCAN_DIR}}"
           docker run \
             --rm \
             --mount type=bind,source=$scandir,target=/scandir \
             --mount type=bind,source=/tmp,target=/tmp \
             clamav/clamav:0.105 \
-            freshclam --on-update-execute="clamscan -r -l /tmp/result.log /scandir/${{env.SCAN_DIR}}"
+            freshclam --on-update-execute="clamscan -r -l /tmp/result.log /scandir"
 
       - name: check result
+        id: check_result
         run: |
             echo "[scan result]"
             cat /tmp/result.log
