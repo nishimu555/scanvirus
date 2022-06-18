@@ -28,7 +28,7 @@ jobs:
           cd build
           docker build -t test/virus-image .
           docker image ls
-          ls $SCAN_DIR
+          sudo ls $SCAN_DIR
 
       # - name: scan clamav
       #   id: scan_clamav
