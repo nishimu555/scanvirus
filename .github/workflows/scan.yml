@@ -52,6 +52,7 @@ jobs:
         with:
           labels: "virus"
           title: "virus check failed !"
-          body: $(cat /tmp/result.log)
+          body: ${{ RESULT_TEXT }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RESULT_TEXT: $(cat /tmp/result.log)
