@@ -33,6 +33,7 @@ jobs:
         id: scan_clamav
         run: |
           scandir=$SCAN_DIR
+          sudo chmod -R 755 $SCAN_DIR
 
           echo "# Virus Report" > /tmp/report.log
           echo "## ScanDir" >> /tmp/report.log
