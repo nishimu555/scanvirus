@@ -27,7 +27,7 @@ jobs:
       - name: scan clamav
         id: scan_clamav
         run: |
-          scandir=$(pwd)/${{env.SCAN_DIR}}"
+          scandir=$(pwd)/${{env.SCAN_DIR}}
           docker run \
             --rm \
             --mount type=bind,source=$scandir,target=/scandir \
@@ -52,7 +52,7 @@ jobs:
             fi 
 
       - name: Create issue
-        if: ${{ failure() }}
+        if: failure() && steps.check_result.outcome == 'failure'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
