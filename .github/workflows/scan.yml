@@ -34,6 +34,7 @@ jobs:
             --mount type=bind,source=/tmp,target=/tmp \
             clamav/clamav:0.105 \
             freshclam --on-update-execute="clamscan -r -l /tmp/result.log /scandir"
+        shell: bash -xe
 
       - name: check result
         id: check_result
