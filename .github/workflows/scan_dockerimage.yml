@@ -1,0 +1,73 @@
+name: Scan Virus for docker image
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+    inputs:
+      scandir:
+        description: 'Input scan dir'
+        required: true
+
+# 空文字だと全フォルダを対象
+env:
+  SCAN_DIR : "/var/lib/docker"
+
+jobs:
+  scan-virus:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v1
+        run: |
+          cd build
+          docker build -t test/virus-image .
+          docker image ls
+          ls $SCAN_DIR
+
+      # - name: scan clamav
+      #   id: scan_clamav
+      #   run: |
+      #     scandir=$(pwd)/${{ github.event.inputs.scandir }}
+
+      #     echo "# Virus Report" > /tmp/report.log
+      #     echo "## ScanDir" >> /tmp/report.log
+      #     echo "- ${scandir}" >> /tmp/report.log
+      #     echo "## ScanResult" >> /tmp/report.log
+
+      #     docker run \
+      #       --rm \
+      #       --mount type=bind,source=$scandir,target=/scandir \
+      #       --mount type=bind,source=/tmp,target=/tmp \
+      #       clamav/clamav:0.105 \
+      #       freshclam --on-update-execute="clamscan -r -l /tmp/result.log /scandir"
+
+      # - name: check result
+      #   id: check_result
+      #   run: |
+      #       echo "[scan result]"
+      #       cat /tmp/result.log
+
+      #       failed_check=$(cat /tmp/result.log | grep FOUND | wc -m | awk '{print $1}')
+
+      #       # FOUNDが1件でもあったらjobを失敗させる
+      #       if [ ${failed_check} -ne 0 ]; then
+      #         echo "*****************************"
+      #         echo "[Failed] virus is existed !!!"
+      #         echo "*****************************"
+      #         exit 1
+      #       fi 
+
+      # - name: Create issue
+      #   if: failure() && steps.check_result.outcome == 'failure'
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     cat /tmp/result.log >> /tmp/report.log
+      #     gh issue create \
+      #     --title "[Failed] virus is existed !!!" \
+      #     --label virus \
+      #     --body-file /tmp/report.log
