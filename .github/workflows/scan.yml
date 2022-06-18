@@ -20,7 +20,8 @@ jobs:
       # test virus
       # https://downloadcenter.trendmicro.com/index.php?regs=jp&prodid=1424
 
-      - name: run clamav
+      - name: scan clamav
+        id: scan-clamav
         run: |
           scandir=$(pwd)
           docker run \
@@ -33,3 +34,14 @@ jobs:
             cat result.log
 
             # freshclam --on-update-execute="clamscan /scandir"
+
+      - name: Create issue
+        if: ${{ steps.scan-clamav.outcome == 'failure' }}
+        uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
+        with:
+          labels: "virus"
+          title: "virus check failed !"
+          body: |
+            $(cat result.log)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
