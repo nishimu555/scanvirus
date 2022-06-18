@@ -35,10 +35,12 @@ jobs:
         run: |
           scandir=$(pwd)/${{ github.event.inputs.scandir }}
 
-          echo "Virus Report" > /tmp/report.log
-          echo "------------------------------" >> /tmp/report.log
-          echo "ScanDir : ${scandir}" >> /tmp/report.log
-          echo "------------------------------" >> /tmp/report.log
+          echo "# Virus Report" > /tmp/report.log
+          echo "---" >> /tmp/report.log
+          echo "## ScanDir" >> /tmp/report.log
+          echo "- ${scandir}" >> /tmp/report.log
+          echo "---" >> /tmp/report.log
+          echo "## ScanResult" >> /tmp/report.log
 
           docker run \
             --rm \
