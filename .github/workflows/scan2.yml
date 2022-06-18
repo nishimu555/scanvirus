@@ -15,6 +15,7 @@ jobs:
       - uses: actions/checkout@v1
 
       # https://docs.clamav.net/manual/Installing/Docker.html
+      # https://clamav-jp.osdn.jp/jdoc/clamav.html#c3.2.1
       - name: run clamav
         run: |
           scandir=$(pwd)
@@ -23,6 +24,7 @@ jobs:
             --mount type=bind,source=$scandir,target=/scandir \
             --mount type=bind,source=/tmp,target=/var/lib/clamav \
             clamav/clamav:0.105 \
-            "freshclam&&clamscan /scandir"
+            freshclam --on-update-execute="clamscan /scandir"
 
+            # "freshclam&&clamscan /scandir"
             # --mount type=bind,source=/var/lib/docker/data/clamav/sockets/,target=/run/clamav/ \
