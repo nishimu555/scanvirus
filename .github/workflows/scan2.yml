@@ -22,5 +22,6 @@ jobs:
             --rm \
             --mount type=bind,source=$scandir,target=/scandir \
             --mount type=bind,source=/tmp,target=/var/lib/clamav \
+            --mount type=bind,source=/var/lib/docker/data/clamav/sockets/,target=/run/clamav/ \
             clamav/clamav:0.105 \
             "freshclam&&clamscan /scandir"
