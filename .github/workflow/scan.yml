@@ -1,0 +1,26 @@
+name: Scan Virus
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 300
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: display info
+        run: |
+          echo $GITHUB_PATH
+          ls $GITHUB_PATH
+
+      - name: install clamav
+        run: |
+          apt install clamav clamav-daemon
+          systemctl start clamav-daemon.service
+          systemctl start clamav-daemon.service 
+
