@@ -9,7 +9,7 @@ on:
     inputs:
       scandir:
         description: 'Input scan dir'
-        required: true
+        required: false
 
 # 空文字だと全フォルダを対象
 env:
