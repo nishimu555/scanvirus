@@ -61,11 +61,11 @@ runs:
             echo "*****************************"
             echo "[Failed] virus is existed !!!"
             echo "*****************************"
-            # echo "::set-output name=scan-result::$(echo "false")
+            echo "::set-output name=scan-result::$(echo "false")
             exit 1
           fi
           
-          # echo "::set-output name=scan-result::$(echo "true")
+          echo "::set-output name=scan-result::$(echo "true")
 
       shell: bash -xe {0}
 
