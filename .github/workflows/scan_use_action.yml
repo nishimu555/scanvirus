@@ -19,8 +19,19 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: scan clamav
+      - name: scan virus by clamav
+        id: scan-virus
         uses: ./.github/actions/scanvirus
         with:
           scan-dir: $(pwd)/${{ github.event.inputs.scandir }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create issue
+        if: failure() && steps.scan-virus.outcome == 'failure'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+          --title "[Failed] virus is existed !!!" \
+          --label virus \
+          --body-file ${{ steps.scan-virus.outputs.report-file }}
+        shell: bash -xe {0}

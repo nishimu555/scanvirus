@@ -16,10 +16,10 @@ inputs:
     description: "select create issue"
     required: false
     default: "true"
-  github-token:
-    description: "github token"
-    required: false
-    default: ""
+  # github-token:
+  #   description: "github token"
+  #   required: false
+  #   default: ""
   log-file:
     description: "log file path & name"
     required: false
@@ -65,29 +65,38 @@ runs:
             echo "*****************************"
             echo "[Failed] virus is existed !!!"
             echo "*****************************"
+
+            echo "# Virus Report" > ${{ inputs.report-file }}
+            echo "## ScanDir" >> ${{ inputs.report-file }}
+            echo "- ${scandir}" >> ${{ inputs.report-file }}
+            echo "## ScanResult" >> ${{ inputs.report-file }}
+            cat ${{ inputs.log-file }} >> ${{ inputs.report-file }}
+
             echo "::set-output name=scan-result::$(echo 'false')"
+
             exit 1
+
           fi
           
           echo "::set-output name=scan-result::$(echo 'true')"
 
       shell: bash -xe {0}
 
-    - name: Create issue
-      # if: failure() && steps.check_result.outcome == 'failure' && ${{ inputs.create-issue}} == 'true'
-      env:
-        GITHUB_TOKEN: ${{ inputs.github-token }}
-      run: |
+    # - name: Create issue
+    #   # if: failure() && steps.check_result.outcome == 'failure' && ${{ inputs.create-issue}} == 'true'
+    #   env:
+    #     GITHUB_TOKEN: ${{ inputs.github-token }}
+    #   run: |
 
-        echo "# Virus Report" > ${{ inputs.report-file }}
-        echo "## ScanDir" >> ${{ inputs.report-file }}
-        echo "- ${scandir}" >> ${{ inputs.report-file }}
-        echo "## ScanResult" >> ${{ inputs.report-file }}
-        cat /tmp/result.log >> ${{ inputs.report-file }}
+    #     echo "# Virus Report" > ${{ inputs.report-file }}
+    #     echo "## ScanDir" >> ${{ inputs.report-file }}
+    #     echo "- ${scandir}" >> ${{ inputs.report-file }}
+    #     echo "## ScanResult" >> ${{ inputs.report-file }}
+    #     cat ${{ inputs.log-file }} >> ${{ inputs.report-file }}
 
-        gh issue create \
-        --title "[Failed] virus is existed !!!" \
-        --label virus \
-        --body-file ${{ inputs.report-file }}
+    #     gh issue create \
+    #     --title "[Failed] virus is existed !!!" \
+    #     --label virus \
+    #     --body-file ${{ inputs.report-file }}
 
-      shell: bash
+    #   shell: bash
