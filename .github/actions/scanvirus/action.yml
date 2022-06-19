@@ -16,11 +16,15 @@ inputs:
     description: "select create issue"
     required: false
     default: "true"
-  log-file:  
+  github-token:
+    description: "github token"
+    required: false
+    default: ""
+  log-file:
     description: "log file path & name"
     required: false
     default: "/tmp/result.log"
-  report-file:  
+  report-file:
     description: "report file path & name"
     required: false
     default: "/tmp/report.log"
@@ -71,7 +75,7 @@ runs:
     - name: Create issue
       if: failure() && steps.check_result.outcome == 'failure' && ${{ inputs.create-issue}} == 'true'
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
         cat /tmp/result.log >> ${{ inputs.report-file }}
         gh issue create \
