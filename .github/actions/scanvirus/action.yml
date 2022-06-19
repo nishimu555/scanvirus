@@ -51,7 +51,7 @@ runs:
           --mount type=bind,source=/tmp,target=/tmp \
           clamav/clamav:0.105 \
           freshclam --on-update-execute="clamscan -r -l ${{ inputs.log-file }} /scandir"
-      shell: bash
+      shell: bash -xe {0}
 
     - name: check result
       id: check_result
@@ -70,7 +70,7 @@ runs:
             exit 1
           fi 
           echo "::set-output name=scan-result::$(echo "true")
-      shell: bash
+      shell: bash -xe {0}
 
     - name: Create issue
       if: failure() && steps.check_result.outcome == 'failure' && ${{ inputs.create-issue}} == 'true'
