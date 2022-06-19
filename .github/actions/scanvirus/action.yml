@@ -9,24 +9,25 @@ description: "Scan virus by Clamav"
 
 inputs:
   scan-dir:  
-    description: "scan dir"
+    description: "Specify scan directory"
     required: true
     default: ""
+  work-dir:
+    description: "Specify work directory"
+    required: false
+    default: "/tmp"
   log-file:
-    description: "log file path & name"
+    description: "Specify the path and name of the log file"
     required: false
-    default: "/tmp/result.log"
+    default: "${{ inputs.work-dir }}/result.log"
   report-file:
-    description: "report file path & name"
+    description: "Specify the path and name of the report file"
     required: false
-    default: "/tmp/report.log"
+    default: "${{ inputs.work-dir }}/report.log"
 
 outputs:
-  scan-result:
-    description: "Scan result. true:no virus , false: virus is exited"
-    value: ${{ steps.check_result.outputs.scan-result }}
   report-file:
-    description: "report file path & name"
+    description: "Report file location"
     value: ${{ inputs.report-file }}
 
 runs:
@@ -39,7 +40,7 @@ runs:
         docker run \
           --rm \
           --mount type=bind,source=$scandir,target=/scandir \
-          --mount type=bind,source=/tmp,target=/tmp \
+          --mount type=bind,source=/tmp,target=${{ inputs.work-dir }} \
           clamav/clamav:0.105 \
           freshclam --on-update-execute="clamscan -r -l ${{ inputs.log-file }} /scandir"
       shell: bash
@@ -60,16 +61,11 @@ runs:
 
             echo "# Virus Report" > ${{ inputs.report-file }}
             echo "## ScanDir" >> ${{ inputs.report-file }}
-            echo "- ${{ inputs.scan-dir }} >> ${{ inputs.report-file }}
+            echo "- ${{ inputs.scan-dir }}" >> ${{ inputs.report-file }}
             echo "## ScanResult" >> ${{ inputs.report-file }}
             cat ${{ inputs.log-file }} >> ${{ inputs.report-file }}
 
-            echo "::set-output name=scan-result::$(echo 'false')"
-
             exit 1
-
           fi
-          
-          echo "::set-output name=scan-result::$(echo 'true')"
 
       shell: bash -xe
