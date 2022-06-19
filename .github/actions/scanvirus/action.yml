@@ -53,7 +53,7 @@ runs:
 
           failed_check=$(cat ${{ inputs.log-file }} | grep FOUND | wc -m | awk '{print $1}')
 
-          # FOUNDが1件でもあったらjobを失敗させる
+          # If there is even one FOUND, make the job fail.
           if [ ${failed_check} -ne 0 ]; then
             echo "*****************************"
             echo "[Failed] virus is existed !!!"
@@ -68,4 +68,4 @@ runs:
             exit 1
           fi
 
-      shell: bash -xe
+      shell: bash
