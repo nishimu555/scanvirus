@@ -64,8 +64,10 @@ runs:
             echo "*****************************"
             echo "::set-output name=scan-result::$(echo "false")
             exit 1
-          fi 
+          fi;
+          
           echo "::set-output name=scan-result::$(echo "true")
+
       shell: bash -xe {0}
 
     - name: Create issue

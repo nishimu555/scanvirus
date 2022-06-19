@@ -31,11 +31,6 @@ jobs:
         run: |
           scandir=$(pwd)/${{ github.event.inputs.scandir }}
 
-          echo "# Virus Report" > /tmp/report.log
-          echo "## ScanDir" >> /tmp/report.log
-          echo "- ${scandir}" >> /tmp/report.log
-          echo "## ScanResult" >> /tmp/report.log
-
           docker run \
             --rm \
             --mount type=bind,source=$scandir,target=/scandir \
@@ -64,7 +59,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+
+          echo "# Virus Report" > /tmp/report.log
+          echo "## ScanDir" >> /tmp/report.log
+          echo "- ${scandir}" >> /tmp/report.log
+          echo "## ScanResult" >> /tmp/report.log
           cat /tmp/result.log >> /tmp/report.log
+
           gh issue create \
           --title "[Failed] virus is existed !!!" \
           --label virus \
