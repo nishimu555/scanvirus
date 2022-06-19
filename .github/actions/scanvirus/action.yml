@@ -19,11 +19,11 @@ inputs:
   log-file:
     description: "Specify the path and name of the log file"
     required: false
-    default: "${{ inputs.work-dir }}/result.log"
+    default: "/tmp/result.log"
   report-file:
     description: "Specify the path and name of the report file"
     required: false
-    default: "${{ inputs.work-dir }}/report.log"
+    default: "/tmp/report.log"
 
 outputs:
   report-file:
@@ -40,7 +40,7 @@ runs:
         docker run \
           --rm \
           --mount type=bind,source=$scandir,target=/scandir \
-          --mount type=bind,source=/tmp,target=${{ inputs.work-dir }} \
+          --mount type=bind,source=${{ inputs.work-dir }},target=${{ inputs.work-dir }} \
           clamav/clamav:0.105 \
           freshclam --on-update-execute="clamscan -r -l ${{ inputs.log-file }} /scandir"
       shell: bash
