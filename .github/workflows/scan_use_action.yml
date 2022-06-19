@@ -1,0 +1,25 @@
+name: Scan Virus (use action)
+
+on:
+  # push:
+  #   branches:
+  #     - main
+
+  workflow_dispatch:
+    inputs:
+      scandir:
+        description: 'Input scan dir'
+        required: false
+
+jobs:
+  scan-virus:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: scan clamav
+        uses: ./.github/actions/scanvirus
+        with:
+          scan-dir: $(pwd)/${{ github.event.inputs.scandir }}

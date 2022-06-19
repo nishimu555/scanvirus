@@ -1,0 +1,81 @@
+name: "Scan virus"
+description: "Scan virus by Clamav"
+
+# https://docs.clamav.net/manual/Installing/Docker.html
+# https://clamav-jp.osdn.jp/jdoc/clamav.html#c3.2.1
+
+# test virus
+# https://downloadcenter.trendmicro.com/index.php?regs=jp&prodid=1424
+
+inputs:
+  scan-dir:  
+    description: "scan dir"
+    required: true
+    default: ""
+  create-issue:  
+    description: "select create issue"
+    required: false
+    default: "true"
+  log-file:  
+    description: "log file path & name"
+    required: false
+    default: "/tmp/result.log"
+  report-file:  
+    description: "report file path & name"
+    required: false
+    default: "/tmp/report.log"
+outputs:
+  scan-result:
+    description: "Scan result. true:no virus , false: virus is exited"
+    value: ${{ steps.check_result.outputs.scan-result }}
+runs:
+  using: "composite"
+  steps:
+    - name: scan clamav
+      id: scan_clamav
+      run: |
+        scandir=${{ inputs.scan-dir }}
+
+        echo "# Virus Report" > ${{ inputs.report-file }}
+        echo "## ScanDir" >> ${{ inputs.report-file }}
+        echo "- ${scandir}" >> ${{ inputs.report-file }}
+        echo "## ScanResult" >> ${{ inputs.report-file }}
+
+        docker run \
+          --rm \
+          --mount type=bind,source=$scandir,target=/scandir \
+          --mount type=bind,source=/tmp,target=/tmp \
+          clamav/clamav:0.105 \
+          freshclam --on-update-execute="clamscan -r -l ${{ inputs.log-file }} /scandir"
+      shell: bash
+
+    - name: check result
+      id: check_result
+      run: |
+          echo "[scan result]"
+          cat ${{ inputs.report-file }}
+
+          failed_check=$(cat ${{ inputs.report-file }} | grep FOUND | wc -m | awk '{print $1}')
+
+          # FOUNDが1件でもあったらjobを失敗させる
+          if [ ${failed_check} -ne 0 ]; then
+            echo "*****************************"
+            echo "[Failed] virus is existed !!!"
+            echo "*****************************"
+            echo "::set-output name=scan-result::$(echo "false")
+            exit 1
+          fi 
+          echo "::set-output name=scan-result::$(echo "true")
+      shell: bash
+
+    - name: Create issue
+      if: failure() && steps.check_result.outcome == 'failure' && ${{ inputs.create-issue}} == 'true'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cat /tmp/result.log >> ${{ inputs.report-file }}
+        gh issue create \
+        --title "[Failed] virus is existed !!!" \
+        --label virus \
+        --body-file ${{ inputs.report-file }}
+      shell: bash

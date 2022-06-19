@@ -11,10 +11,6 @@ on:
         description: 'Input scan dir'
         required: false
 
-# 空文字だと全フォルダを対象
-env:
-  SCAN_DIR : "subdir"
-
 jobs:
   scan-virus:
     runs-on: ubuntu-20.04
