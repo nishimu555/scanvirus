@@ -34,4 +34,4 @@ jobs:
           --title "[Failed] virus is existed !!!" \
           --label virus \
           --body-file ${{ steps.scan-virus.outputs.report-file }}
-        shell: bash -xe {0}
+        shell: bash
