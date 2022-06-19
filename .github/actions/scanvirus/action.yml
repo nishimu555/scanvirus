@@ -28,10 +28,12 @@ inputs:
     description: "report file path & name"
     required: false
     default: "/tmp/report.log"
+
 outputs:
   scan-result:
     description: "Scan result. true:no virus , false: virus is exited"
     value: ${{ steps.check_result.outputs.scan-result }}
+
 runs:
   using: "composite"
   steps:
@@ -39,12 +41,6 @@ runs:
       id: scan_clamav
       run: |
         scandir=${{ inputs.scan-dir }}
-
-        echo "# Virus Report" > ${{ inputs.report-file }}
-        echo "## ScanDir" >> ${{ inputs.report-file }}
-        echo "- ${scandir}" >> ${{ inputs.report-file }}
-        echo "## ScanResult" >> ${{ inputs.report-file }}
-
         docker run \
           --rm \
           --mount type=bind,source=$scandir,target=/scandir \
@@ -57,9 +53,9 @@ runs:
       id: check_result
       run: |
           echo "[scan result]"
-          cat ${{ inputs.report-file }}
+          cat ${{ inputs.log-file }}
 
-          failed_check=$(cat ${{ inputs.report-file }} | grep FOUND | wc -m | awk '{print $1}')
+          failed_check=$(cat ${{ inputs.log-file }} | grep FOUND | wc -m | awk '{print $1}')
 
           # FOUNDが1件でもあったらjobを失敗させる
           if [ ${failed_check} -ne 0 ]; then
@@ -77,9 +73,16 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
+
+        echo "# Virus Report" > ${{ inputs.report-file }}
+        echo "## ScanDir" >> ${{ inputs.report-file }}
+        echo "- ${scandir}" >> ${{ inputs.report-file }}
+        echo "## ScanResult" >> ${{ inputs.report-file }}
         cat /tmp/result.log >> ${{ inputs.report-file }}
+
         gh issue create \
         --title "[Failed] virus is existed !!!" \
         --label virus \
         --body-file ${{ inputs.report-file }}
+
       shell: bash
