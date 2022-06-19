@@ -33,6 +33,9 @@ outputs:
   scan-result:
     description: "Scan result. true:no virus , false: virus is exited"
     value: ${{ steps.check_result.outputs.scan-result }}
+  report-file:
+    description: "report file path & name"
+    value: ${{ inputs.report-file }}
 
 runs:
   using: "composite"
